@@ -6,9 +6,8 @@ import 'components/InterviewerListItem.scss';
 export default function InterviewerListItem(props) {
   const interviewerClass = classNames('interviewers__item', {
     'interviewers__item--selected': props.selected,
-    'interviewers-item-image': props.avatar,
     'interviewers__item--selected-img': props.selected && props.avatar
-  })
+  });
 
   return (
     <li 
@@ -20,7 +19,7 @@ export default function InterviewerListItem(props) {
         src={props.avatar}
         alt={props.name}
       />
-      {props.name}
+      {props.selected ? props.name : null}
     </li>
   );
 }
