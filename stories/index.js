@@ -33,3 +33,4 @@ storiesOf("DayListItem", module)
   .add("Full", () => <DayListItem name="Monday" spots={0} />)
   .add("Clickable", () => (
     <DayListItem name="Tuesday" setDay={action("setDay")} spots={5} />
+  ));
