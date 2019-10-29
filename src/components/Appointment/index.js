@@ -6,6 +6,6 @@ export default function Appointment(props) {
 
 
   return (
-    <article className='appointment'></article>
+    <article className='appointment'>{props.time}</article>
   )
 }
