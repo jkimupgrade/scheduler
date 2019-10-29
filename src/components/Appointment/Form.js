@@ -4,8 +4,8 @@ import InterviewerList from '../InterviewerList';
 import Button from '../Button';
 
 export default function Form(props) {
-  const [name, setName] = useState('');
-  const [interviewer, setInterviewer] = useState(null);
+  const [name, setName] = useState(props.name || '');
+  const [interviewer, setInterviewer] = useState(props.interviewer || null);
   
   return (
     <main className="appointment__card appointment__card--create">
