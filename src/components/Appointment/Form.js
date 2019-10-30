@@ -19,13 +19,7 @@ export default function Form(props) {
     props.onCancel();
     return;
   }
-
-  // const save = () => {
-  //   props.onSave(name, interviewer);
-  //   // debugger;
-  //   // return [name, interviewer];
-  // }
-
+  
   return (
     <main className="appointment__card appointment__card--create">
       <section className="appointment__card-left">
