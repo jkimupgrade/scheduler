@@ -9,6 +9,9 @@ export default function useVisualMode (initial) {
     setHistory([...history, next]);
   }
   const back = () => {
+    if (history.length === 1) {
+      return;
+    }
     history.splice(history.length - 1);
     setMode(history[history.length - 1]);
   }
