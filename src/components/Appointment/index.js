@@ -7,8 +7,6 @@ import Empty from 'components/Appointment/Empty';
 import Show from 'components/Appointment/Show';
 
 export default function Appointment(props) {
-  console.log(props.interview);
-  
   return (
     <article className='appointment'>
       <Header time={props.time}/>
