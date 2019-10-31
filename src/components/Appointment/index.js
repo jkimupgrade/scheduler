@@ -33,7 +33,7 @@ export default function Appointment(props) {
       interviewer
     };
       
-    transition(SAVING);
+    transition(SAVING, true);
     
     props
       .bookInterview(props.id, interview)
@@ -91,13 +91,13 @@ export default function Appointment(props) {
         {mode === ERROR_SAVE && (
           <Error 
             message={'Save unsuccessful'}
-            onClose={() => transition(SHOW)}
+            onClose={back}
           />
         )}
         {mode === ERROR_DELETE && (
           <Error 
             message={'Delete unsuccessful'}
-            onClose={() => transition(SHOW)}
+            onClose={back}
           />
         )}
         {/* {props.interview ? <Show student={props.interview.student} interviewer={props.interview.interviewer}/> : <Empty />} */}
