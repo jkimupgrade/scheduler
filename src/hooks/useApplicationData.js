@@ -3,24 +3,23 @@ import axios from 'axios';
 
 export default function useApplicationData () {
   
-  const SET_DAY = "SET_DAY";
-  const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
-  const SET_INTERVIEW = "SET_INTERVIEW";
+  const SET_DAY = 'SET_DAY';
+  const SET_APPLICATION_DATA = 'SET_APPLICATION_DATA';
+  const SET_INTERVIEW = 'SET_INTERVIEW';
 
+  // reducer to update state
   function reducer(state, action) {
-    switch (action.type) {
-      case SET_DAY:
-        return {...state, ...action.values };
-      case SET_APPLICATION_DATA:
-        return {...state, ...action.values };
-      case SET_INTERVIEW:
-        return {...state, ...action.values };
-      default:
-        throw new Error(
-          `Tried to reduce with unsupported action type: ${action.type}`
-        );
+    
+    const dict = {
+      SET_DAY: {...state, ...action.values },
+      SET_APPLICATION_DATA: {...state, ...action.values },
+      SET_INTERVIEW: {...state, ...action.values },
+      default: () => {throw new Error(`Tried to reduce with unsupported action type: ${action.type}`)}
     }
+    
+    return (dict[action.type] || dict.default);
   }
+  
   // initialize state
   const [state, dispatch] = useReducer(reducer, {
     day: 'Monday',
