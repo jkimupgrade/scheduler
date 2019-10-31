@@ -49,7 +49,6 @@ export default function Application(props) {
   }
 
   const cancelInterview = (id) => {
-    // console.log('id to be deleted:', id);
 
     return axios.delete(`/api/appointments/${id}`)
     .then(() => {
