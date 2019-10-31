@@ -43,7 +43,7 @@ export default function Appointment(props) {
 
   // delete appointment
   const deleteAppointment = () => {
-    transition(DELETING);
+    transition(DELETING, true);
 
     props
       .cancelInterview(props.id)
