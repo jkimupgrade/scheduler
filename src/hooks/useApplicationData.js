@@ -9,9 +9,10 @@ const SET_INTERVIEW = 'SET_INTERVIEW';
 const reducer = (state, action) => {
   
   const dict = {
-    SET_DAY: {...state, ...action.values },
+    SET_DAY: {...state, day: action.day },
     SET_APPLICATION_DATA: {...state, ...action.values },
     SET_INTERVIEW: {...state, ...action.values},
+    SET_SPOTS: {},
     default: () => {throw new Error(`Tried to reduce with unsupported action type: ${action.type}`)}
   }
   
@@ -56,20 +57,18 @@ export default function useApplicationData () {
     if (!webSocket) {
       return;
     }
-    
+
     webSocket.onopen = function (event) {
       webSocket.send('ping');
     }
     
     webSocket.onmessage = function (event) {
       const msg = JSON.parse(event.data);
-      console.log('Message Received:', msg);
+
       if (msg.type === 'SET_INTERVIEW') {
         if (msg.interview === null) {
           
           const temp = {...state};
-
-          console.log('temp_state:', temp);
 
           const appointment = {
             ...temp.appointments[msg.id],
@@ -80,8 +79,6 @@ export default function useApplicationData () {
             ...temp.appointments,
             [msg.id]: appointment
           };
-
-          console.log('appointments_canceling:', appointments);
           
           dispatch({ type: SET_INTERVIEW, values: {appointments} });
 
@@ -99,8 +96,6 @@ export default function useApplicationData () {
             [msg.id]: appointment
           };
 
-          console.log('appointments_booking:', appointments);
-
           dispatch({ type: SET_INTERVIEW, values: {appointments} });
 
         }
@@ -110,7 +105,7 @@ export default function useApplicationData () {
   }, [webSocket, state])
   
   // set day
-  const setDay = (day) => dispatch({ type: SET_DAY, values: {day}});
+  const setDay = (day) => dispatch({ type: SET_DAY, day });
   
   // set interview (if edit=true, no change to spot count; if edit=false, decrease spot count)
   const bookInterview = (id, interview) => {
