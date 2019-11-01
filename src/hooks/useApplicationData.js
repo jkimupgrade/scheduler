@@ -13,7 +13,7 @@ export default function useApplicationData () {
     const dict = {
       SET_DAY: {...state, ...action.values },
       SET_APPLICATION_DATA: {...state, ...action.values },
-      SET_INTERVIEW: {...state, ...action.values },
+      SET_INTERVIEW: {...state, ...action.values},
       default: () => {throw new Error(`Tried to reduce with unsupported action type: ${action.type}`)}
     }
     
@@ -54,11 +54,14 @@ export default function useApplicationData () {
       [id]: appointment
     };
 
-    const days = countSpots(id, true);
+    // create a intermediary state to count available spots
+    const temp = {...state, appointments};
+    const days = countSpots(id, temp);
 
     return axios.put(`/api/appointments/${id}`, { interview })    
     .then(() => {
       dispatch({ type: SET_INTERVIEW, values: {appointments, days} });
+
     })
   }
   // cancel interview (increase spot count for day)
@@ -73,28 +76,32 @@ export default function useApplicationData () {
       ...state.appointments,
       [id]: appointment
     };
-
-    const days = countSpots(id);
     
+    // create a intermediary state to count available spots
+    const temp = {...state, appointments};
+    const days = countSpots(id, temp);
+
     return axios.delete(`/api/appointments/${id}`)
     .then(() => {
       dispatch({ type: SET_INTERVIEW, values: {appointments, days} });
     })
   }
 
-  // consider dispatch in countSpots!!!! (reusuable)
-  const countSpots = (id, cancel=false) => {
-    const localDays = [...state.days];
+  // counts available (empty) spots
+  const countSpots = (id, temp) => {
+    const localDays = [...temp.days];
     const result = localDays.filter(day => day.appointments.includes(id))[0];    
 
     const array = result.appointments;
-      
+    
+    const localAppointments = {...temp.appointments};
+
     const spots = array.reduce((acc, cur) => {
-      if (state.appointments[cur].interview === null) {
+      if (localAppointments[cur].interview === null) {
         return acc + 1;
       }
       return acc;
-    }, cancel ? -1 : 1);
+    }, 0);
 
     result.spots = spots;
 
