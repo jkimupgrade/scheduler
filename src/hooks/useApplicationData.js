@@ -1,6 +1,28 @@
 import { useReducer, useEffect, useState } from 'react';
 import axios from 'axios';
 
+// counts available (empty) spots
+const countSpots = (id, tmp) => {
+  const localDays = [...tmp.days];
+  const result = localDays.filter(day => day.appointments.includes(id))[0];    
+
+  const array = result.appointments;
+  
+  const localAppointments = {...tmp.appointments};
+
+  const spots = array.reduce((acc, cur) => {
+    if (localAppointments[cur].interview === null) {
+      return acc + 1;
+    }
+    return acc;
+  }, 0);
+
+  result.spots = spots;
+
+  return localDays;
+
+}
+
 const SET_DAY = 'SET_DAY';
 const SET_APPLICATION_DATA = 'SET_APPLICATION_DATA';
 const SET_INTERVIEW = 'SET_INTERVIEW';
@@ -9,19 +31,35 @@ const SET_INTERVIEW = 'SET_INTERVIEW';
 const reducer = (state, action) => {
   
   const dict = {
-    SET_DAY: {...state, day: action.day },
-    SET_APPLICATION_DATA: {
+    SET_DAY: () => ({...state, day: action.day }),
+    SET_APPLICATION_DATA: () => ({
       ...state, 
       days: action.days, 
       appointments: action.appointments, 
       interviewers: action.interviewers
-     },
-    SET_INTERVIEW: {...state, ...action.values},
-    SET_SPOTS: {},
+     }),
+    SET_INTERVIEW: () => {
+      // update appointments before counting days
+      const tmp = {
+        ...state,
+        appointments: {
+          ...state.appointments,
+          [action.id]: {
+            ...state.appointments[action.id],
+            interview: action.interview && {...action.interview }
+          }
+        }
+      };
+
+      // get updated days object
+      const days = countSpots(action.id, tmp);
+      return {...tmp, days: days };
+
+    },
     default: () => {throw new Error(`Tried to reduce with unsupported action type: ${action.type}`)}
   }
-  
-  return (dict[action.type] || dict.default);
+
+  return (dict[action.type] || dict.default)();
 }
 
 export default function useApplicationData () {
@@ -72,113 +110,37 @@ export default function useApplicationData () {
 
       if (msg.type === 'SET_INTERVIEW') {
         if (msg.interview === null) {
-          
-          // const temp = {...state};
-
-          // const appointment = {
-          //   ...temp.appointments[msg.id],
-          //   interview: null
-          // };
-      
-          // const appointments = {
-          //   ...temp.appointments,
-          //   [msg.id]: appointment
-          // };
-          
           dispatch({ type: SET_INTERVIEW, id: msg.id, interview: null });
 
         } else {
-          
-          const temp = {...state};
-
-          const appointment = {
-            ...temp.appointments[msg.id],
-            interview: {...msg.interview}
-          };
-            
-          const appointments = {
-            ...temp.appointments,
-            [msg.id]: appointment
-          };
-
-          dispatch({ type: SET_INTERVIEW, values: {appointments} });
+          dispatch({ type: SET_INTERVIEW, id: msg.id, interview: {...msg.interview} });
 
         }
       }
     }
 
-  }, [webSocket, state])
+  }, [webSocket, state]);
   
   // set day
   const setDay = (day) => dispatch({ type: SET_DAY, day });
   
-  // set interview (if edit=true, no change to spot count; if edit=false, decrease spot count)
+  // set interview
   const bookInterview = (id, interview) => {
-    const temp = {...state};
-
-    const appointment = {
-      ...temp.appointments[id],
-      interview: { ...interview }
-    };
-      
-    const appointments = {
-      ...temp.appointments,
-      [id]: appointment
-    };
-
-    // create a intermediary state to count available spots
-    const temp_mid = {...temp, appointments};
-    const days = countSpots(id, temp_mid);
 
     return axios.put(`/api/appointments/${id}`, { interview })    
     .then(() => {
-      dispatch({ type: SET_INTERVIEW, values: {appointments, days} });
+      dispatch({ type: SET_INTERVIEW, id, interview });
+
     })
   }
   // cancel interview (increase spot count for day)
   const cancelInterview = (id) => {
-    const temp = {...state};
-
-    const appointment = {
-      ...temp.appointments[id],
-      interview: null
-    };
-
-    const appointments = {
-      ...temp.appointments,
-      [id]: appointment
-    };
-    
-    // create a intermediary state to count available spots
-    const temp_mid = {...temp, appointments};
-    const days = countSpots(id, temp_mid);
 
     return axios.delete(`/api/appointments/${id}`)
     .then(() => {
-      dispatch({ type: SET_INTERVIEW, values: {appointments, days} });
+      dispatch({ type: SET_INTERVIEW, id, interview: null });
     })
   }
 
-  // counts available (empty) spots
-  const countSpots = (id, temp_mid) => {
-    const localDays = [...temp_mid.days];
-    const result = localDays.filter(day => day.appointments.includes(id))[0];    
-
-    const array = result.appointments;
-    
-    const localAppointments = {...temp_mid.appointments};
-
-    const spots = array.reduce((acc, cur) => {
-      if (localAppointments[cur].interview === null) {
-        return acc + 1;
-      }
-      return acc;
-    }, 0);
-
-    result.spots = spots;
-
-    return localDays;
-
-  }
   return { state, setDay, bookInterview, cancelInterview };
 }

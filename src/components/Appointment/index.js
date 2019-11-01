@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import 'components/Appointment/styles.scss';
 
@@ -21,10 +21,22 @@ export default function Appointment(props) {
   const EDIT = 'EDIT';
   const ERROR_SAVE = 'ERROR_SAVE';
   const ERROR_DELETE = 'ERROR_DELETE';
-
+  
   const { mode, transition, back } = useVisualMode(
     props.interview ? SHOW : EMPTY
   );
+
+  // fix for stale state bug
+  useEffect(() => {
+    if (props.interview && mode === EMPTY) {
+      transition(SHOW);
+    }
+
+    if (props.interview === null && mode === SHOW) {
+      transition(EMPTY);
+    }
+
+  }, [props.interview, transition, mode]);
   
   // save appointment
   const save = (name, interviewer) => {
@@ -50,13 +62,12 @@ export default function Appointment(props) {
       .then(() => transition(EMPTY))
       .catch(() => transition(ERROR_DELETE, true));
   }
-  const interview = props.interview;
   
   return (
     <article className='appointment'>
       <Header time={props.time}/>
         {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
-        {mode === SHOW && interview && (
+        {mode === SHOW && props.interview && (
           <Show
             student={props.interview.student}
             interviewer={props.interview.interviewer}
@@ -82,8 +93,8 @@ export default function Appointment(props) {
         )}
         {mode === EDIT && (
           <Form
-            name={props.name}
-            interviewer={props.interviewer}
+            name={props.interview.student}
+            interviewer={props.interview.interviewer.id}
             interviewers={props.interviewers}
             onCancel={back}
             onSave={save}
