@@ -41,44 +41,65 @@ export default function useApplicationData () {
   // set day
   const setDay = (day) => dispatch({ type: SET_DAY, values: {day}});
   
-  // set interview
+  // set interview (if edit=true, no change to spot count; if edit=false, decrease spot count)
   const bookInterview = (id, interview) => {
-
-    return axios.put(`/api/appointments/${id}`, { interview })
-    .then(() => {
-
-      const appointment = {
-        ...state.appointments[id],
-        interview: { ...interview }
-      };
-        
-      const appointments = {
-        ...state.appointments,
-        [id]: appointment
-      };
   
-      dispatch({ type: SET_INTERVIEW, values: {appointments} });
-    })
+    const appointment = {
+      ...state.appointments[id],
+      interview: { ...interview }
+    };
       
-  }
-  // cancel interview
-  const cancelInterview = (id) => {
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
 
+    const days = countSpots(id, true);
+
+    return axios.put(`/api/appointments/${id}`, { interview })    
+    .then(() => {
+      dispatch({ type: SET_INTERVIEW, values: {appointments, days} });
+    })
+  }
+  // cancel interview (increase spot count for day)
+  const cancelInterview = (id) => {
+    
+    const appointment = {
+      ...state.appointments[id],
+      interview: null
+    };
+
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+
+    const days = countSpots(id);
+    
     return axios.delete(`/api/appointments/${id}`)
     .then(() => {
-      const appointment = {
-        ...state.appointments[id],
-        interview: null
-      };
-
-      const appointments = {
-        ...state.appointments,
-        [id]: appointment
-      };
-      
-      dispatch({ type: SET_INTERVIEW, values: {appointments} });
+      dispatch({ type: SET_INTERVIEW, values: {appointments, days} });
     })
   }
 
+  // consider dispatch in countSpots!!!! (reusuable)
+  const countSpots = (id, cancel=false) => {
+    const localDays = [...state.days];
+    const result = localDays.filter(day => day.appointments.includes(id))[0];    
+
+    const array = result.appointments;
+      
+    const spots = array.reduce((acc, cur) => {
+      if (state.appointments[cur].interview === null) {
+        return acc + 1;
+      }
+      return acc;
+    }, cancel ? -1 : 1);
+
+    result.spots = spots;
+
+    return localDays;
+
+  }
   return { state, setDay, bookInterview, cancelInterview };
 }
