@@ -50,12 +50,13 @@ export default function Appointment(props) {
       .then(() => transition(EMPTY))
       .catch(() => transition(ERROR_DELETE, true));
   }
-
+  const interview = props.interview;
+  
   return (
     <article className='appointment'>
       <Header time={props.time}/>
         {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
-        {mode === SHOW && (
+        {mode === SHOW && interview && (
           <Show
             student={props.interview.student}
             interviewer={props.interview.interviewer}
