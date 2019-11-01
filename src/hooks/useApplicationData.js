@@ -20,7 +20,6 @@ const countSpots = (id, tmp) => {
   result.spots = spots;
 
   return localDays;
-
 }
 
 const SET_DAY = 'SET_DAY';
