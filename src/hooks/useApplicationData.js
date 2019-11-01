@@ -10,7 +10,12 @@ const reducer = (state, action) => {
   
   const dict = {
     SET_DAY: {...state, day: action.day },
-    SET_APPLICATION_DATA: {...state, ...action.values },
+    SET_APPLICATION_DATA: {
+      ...state, 
+      days: action.days, 
+      appointments: action.appointments, 
+      interviewers: action.interviewers
+     },
     SET_INTERVIEW: {...state, ...action.values},
     SET_SPOTS: {},
     default: () => {throw new Error(`Tried to reduce with unsupported action type: ${action.type}`)}
@@ -36,7 +41,7 @@ export default function useApplicationData () {
       axios.get('/api/appointments'),
       axios.get('/api/interviewers')
     ]).then((all) => {
-      dispatch({ type: SET_APPLICATION_DATA, values: {days: all[0].data, appointments: all[1].data, interviewers: all[2].data } });
+      dispatch({ type: SET_APPLICATION_DATA, days: all[0].data, appointments: all[1].data, interviewers: all[2].data });
     })
   }, []);
   
@@ -68,19 +73,19 @@ export default function useApplicationData () {
       if (msg.type === 'SET_INTERVIEW') {
         if (msg.interview === null) {
           
-          const temp = {...state};
+          // const temp = {...state};
 
-          const appointment = {
-            ...temp.appointments[msg.id],
-            interview: null
-          };
+          // const appointment = {
+          //   ...temp.appointments[msg.id],
+          //   interview: null
+          // };
       
-          const appointments = {
-            ...temp.appointments,
-            [msg.id]: appointment
-          };
+          // const appointments = {
+          //   ...temp.appointments,
+          //   [msg.id]: appointment
+          // };
           
-          dispatch({ type: SET_INTERVIEW, values: {appointments} });
+          dispatch({ type: SET_INTERVIEW, id: msg.id, interview: null });
 
         } else {
           
