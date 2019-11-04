@@ -1,6 +1,6 @@
 import React from "react";
 
-import { render, cleanup, waitForElement, getByText, getAllByTestId, getByAltText, getByPlaceholderText, prettyDOM } from "@testing-library/react";
+import { render, cleanup, waitForElement, getByText, getAllByTestId, getByAltText, getByPlaceholderText, prettyDOM, waitForElementToBeRemoved } from "@testing-library/react";
 
 import Application from "components/Application";
 import { fireEvent } from "@testing-library/react/dist";
@@ -24,7 +24,7 @@ describe('Application', () => {
   
   it('loads data, books an interview and reduces the spots remaining for the first day by 1', async () => {
     // Render the Application.
-    const { container } = render(<Application />);
+    const { container, debug } = render(<Application />);
     // Wait until the text "Archie Cohen" is displayed.
     await waitForElement(() => getByText(container, 'Archie Cohen'));
     // Click the "Add" button on the first empty appointment.
@@ -39,9 +39,19 @@ describe('Application', () => {
     fireEvent.click(getByAltText(appointment, 'Sylvia Palmer'));
 
     fireEvent.click(getByText(appointment, 'Save'));
+    
+    // output the current state of the DOM
+    // console.log(prettyDOM(appointment));
+    
+    // debug()
+    
+    // 2 approaches to waiting for disappearance (Saving)
+    // await waitForElement(() => getByText(appointment, 'Lydia Miller-Jones'));
+    await waitForElementToBeRemoved(() => getByText(appointment, 'Saving'));
 
-    console.log(prettyDOM(appointment));
 
+    expect(getByText(appointment, 'Saving')).not.toBeInTheDocument();
+    expect(getByText(appointment, 'Lydia Miller-Jones')).toBeInTheDocument();
 
     // Enter the name "Lydia Miller-Jones" into the input with the placeholder "Enter Student Name".
     // Click the first interviewer in the list.
@@ -50,11 +60,6 @@ describe('Application', () => {
     // Wait until the element with the text "Lydia Miller-Jones" is displayed.
     // Check that the DayListItem with the text "Monday" also has the text "no spots remaining".
     
-  
-  
-  
-  
-  
   });
 
 });
