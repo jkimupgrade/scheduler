@@ -1,65 +1,7 @@
 import { useReducer, useEffect, useState } from 'react';
 import axios from 'axios';
 
-// counts available (empty) spots
-const countSpots = (id, tmp) => {
-  const localDays = [...tmp.days];
-  const result = localDays.filter(day => day.appointments.includes(id))[0];    
-
-  const array = result.appointments;
-  
-  const localAppointments = {...tmp.appointments};
-
-  const spots = array.reduce((acc, cur) => {
-    if (localAppointments[cur].interview === null) {
-      return acc + 1;
-    }
-    return acc;
-  }, 0);
-
-  result.spots = spots;
-
-  return localDays;
-}
-
-const SET_DAY = 'SET_DAY';
-const SET_APPLICATION_DATA = 'SET_APPLICATION_DATA';
-const SET_INTERVIEW = 'SET_INTERVIEW';
-
-// reducer to update state
-const reducer = (state, action) => {
-  
-  const dict = {
-    SET_DAY: () => ({...state, day: action.day }),
-    SET_APPLICATION_DATA: () => ({
-      ...state, 
-      days: action.days, 
-      appointments: action.appointments, 
-      interviewers: action.interviewers
-     }),
-    SET_INTERVIEW: () => {
-      // update appointments before counting days
-      const tmp = {
-        ...state,
-        appointments: {
-          ...state.appointments,
-          [action.id]: {
-            ...state.appointments[action.id],
-            interview: action.interview && {...action.interview }
-          }
-        }
-      };
-
-      // get updated days object
-      const days = countSpots(action.id, tmp);
-      return {...tmp, days: days };
-
-    },
-    default: () => {throw new Error(`Tried to reduce with unsupported action type: ${action.type}`)}
-  }
-
-  return (dict[action.type] || dict.default)();
-}
+import reducer, { SET_INTERVIEW, SET_APPLICATION_DATA, SET_DAY } from 'reducers/application';
 
 export default function useApplicationData () {
 
