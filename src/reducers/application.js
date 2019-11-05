@@ -29,7 +29,7 @@ export default function reducer(state, action) {
   const dict = {
     SET_DAY: () => ({...state, day: action.day }),
     SET_APPLICATION_DATA: () => ({
-      ...state, 
+      ...state,
       days: action.days, 
       appointments: action.appointments, 
       interviewers: action.interviewers
