@@ -1,6 +1,6 @@
 import React from "react";
 
-import { render, cleanup, waitForElement, getByText, getAllByTestId, getByAltText, getByPlaceholderText, prettyDOM, waitForElementToBeRemoved } from "@testing-library/react";
+import { render, cleanup, waitForElement, getByText, getAllByTestId, getByAltText, getByPlaceholderText, prettyDOM, waitForElementToBeRemoved, queryByText } from "@testing-library/react";
 
 import Application from "components/Application";
 import { fireEvent } from "@testing-library/react/dist";
@@ -39,26 +39,25 @@ describe('Application', () => {
     fireEvent.click(getByAltText(appointment, 'Sylvia Palmer'));
 
     fireEvent.click(getByText(appointment, 'Save'));
-    
-    // output the current state of the DOM
-    // console.log(prettyDOM(appointment));
-    
-    // debug()
-    
-    // 2 approaches to waiting for disappearance (Saving)
-    // await waitForElement(() => getByText(appointment, 'Lydia Miller-Jones'));
+
+    // 'Saving' should be available while appointment is saving
+    expect(getByText(appointment, 'Saving')).toBeInTheDocument();
+
+    // // 2 approaches to waiting for disappearance (Saving)
+    // // await waitForElement(() => getByText(appointment, 'Lydia Miller-Jones'));
     await waitForElementToBeRemoved(() => getByText(appointment, 'Saving'));
 
-
-    expect(getByText(appointment, 'Saving')).not.toBeInTheDocument();
+    // debug()
+    expect(queryByText(appointment, 'Saving')).not.toBeInTheDocument();
     expect(getByText(appointment, 'Lydia Miller-Jones')).toBeInTheDocument();
 
-    // Enter the name "Lydia Miller-Jones" into the input with the placeholder "Enter Student Name".
-    // Click the first interviewer in the list.
-    // Click the "Save" button on that same appointment.
-    // Check that the element with the text "Saving" is displayed.
-    // Wait until the element with the text "Lydia Miller-Jones" is displayed.
-    // Check that the DayListItem with the text "Monday" also has the text "no spots remaining".
+    // find specific day node that contains the text 'Monday'
+    const day = getAllByTestId(container, 'day').find(day => 
+      queryByText(day, 'Monday')
+    );
+
+    // Monday should have no spots remaining
+    expect(getByText(day, 'no spots remaining')).toBeInTheDocument();
     
   });
 
