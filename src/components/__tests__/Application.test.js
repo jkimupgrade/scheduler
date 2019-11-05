@@ -1,7 +1,18 @@
 import React from "react";
 import axios from 'axios';
 
-import { render, cleanup, waitForElement, getByText, getAllByTestId, getByAltText, getByPlaceholderText, prettyDOM, waitForElementToBeRemoved, queryByText } from "@testing-library/react";
+import { 
+  render,
+  cleanup,
+  waitForElement, 
+  getByText, 
+  getAllByTestId, 
+  getByAltText, 
+  getByPlaceholderText, 
+  prettyDOM, 
+  waitForElementToBeRemoved, 
+  queryByText 
+} from "@testing-library/react";
 
 import Application from "components/Application";
 import { fireEvent } from "@testing-library/react/dist";
