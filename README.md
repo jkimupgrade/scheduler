@@ -1,5 +1,5 @@
 # Interview Scheduler
-This __React__ application allows students (users) to schedule interviews through a clean web application. The application leverages __web sockets__ to ensure every user receives the latest interview schedule view along with the latest spots count.
+This `React` application allows students (users) to schedule interviews through a clean web application. The application leverages `web sockets` to ensure every user receives the latest interview schedule view along with the latest spots count.
 
 ## Setup
 
