@@ -33,3 +33,6 @@ Placeholder for future (disregard)
 
 ## App demo
 !["App demo"](/docs/animation.gif)
+
+## Websockets demo
+!["Websockets demo"](/docs/websockets.gif)
