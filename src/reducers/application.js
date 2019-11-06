@@ -5,7 +5,7 @@ export const SET_INTERVIEW = 'SET_INTERVIEW';
 // counts available (empty) spots
 const countSpots = (id, tmp) => {
   const localDays = [...tmp.days];
-  const result = localDays.filter(day => day.appointments.includes(id))[0];    
+  const result = localDays.filter(day => day.appointments.includes(id))[0];  
 
   const array = result.appointments;
   
