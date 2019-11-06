@@ -31,6 +31,5 @@ Placeholder for future (disregard)
 ## Server code
 [scheduler-api](https://github.com/lighthouse-labs/scheduler-api)
 
-## Screenshots
-
-
+## App demo
+!["App demo"](/docs/animation.gif)
