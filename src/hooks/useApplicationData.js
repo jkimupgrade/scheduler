@@ -29,6 +29,26 @@ export default function useApplicationData () {
     })
   }, []);
   
+
+// useEffect(() => {
+//   socket.current = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
+//   socket.current.onopen = () => {
+//     socket.current.send("ping");
+//     socket.current.onmessage = function(event){
+//       let parsed = JSON.parse(event.data);
+//       if (parsed.type === "SET_INTERVIEW") {
+//         console.log("WE GOT A PACKAGE INCOMING HERE!");
+//         console.log("parsed: ", parsed);
+
+//         dispatch({type: UPDATE_INTERVIEW, value: parsed});
+//       }
+//     }
+//   }
+//   return () => {
+//     socket.current.close()
+//   }
+// },[])
+
   // initialize webSocket state
   let [webSocket, setWebsocket] = useState(null);
   
@@ -65,7 +85,7 @@ export default function useApplicationData () {
       }
     }
 
-  }, [webSocket, state]);
+  }, [webSocket]);
   
   // set day
   const setDay = (day) => dispatch({ type: SET_DAY, day });
