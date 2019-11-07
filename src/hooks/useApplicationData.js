@@ -1,4 +1,4 @@
-import { useReducer, useEffect, useState } from 'react';
+import { useReducer, useEffect } from 'react';
 import axios from 'axios';
 
 import reducer, { SET_INTERVIEW, SET_APPLICATION_DATA, SET_DAY } from 'reducers/application';
@@ -29,33 +29,9 @@ export default function useApplicationData () {
     })
   }, []);
   
-
-// useEffect(() => {
-//   socket.current = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
-//   socket.current.onopen = () => {
-//     socket.current.send("ping");
-//     socket.current.onmessage = function(event){
-//       let parsed = JSON.parse(event.data);
-//       if (parsed.type === "SET_INTERVIEW") {
-//         console.log("WE GOT A PACKAGE INCOMING HERE!");
-//         console.log("parsed: ", parsed);
-
-//         dispatch({type: UPDATE_INTERVIEW, value: parsed});
-//       }
-//     }
-//   }
-//   return () => {
-//     socket.current.close()
-//   }
-// },[])
-
-  // initialize webSocket state
-  // let [webSocket, setWebsocket] = useState(null);
-  
   // instantiate webSocket class
   useEffect(() => {
     const webSocket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
-    // setWebsocket(webSocket);
 
     webSocket.onopen = function (event) {
       webSocket.send('ping');
@@ -76,19 +52,10 @@ export default function useApplicationData () {
     }
 
     return () => {
-      console.log('SOCKET CLOSED')
       webSocket.close();
     }
 
   }, []);
-
-  // useEffect(() => {
-  //   // prevent app from crashing on mount (no webSocket object)
-  //   if (!webSocket) {
-  //     return;
-  //   }
-
-  // }, [webSocket]);
   
   // set day
   const setDay = (day) => dispatch({ type: SET_DAY, day });
