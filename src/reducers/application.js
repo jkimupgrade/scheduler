@@ -27,7 +27,7 @@ const countSpots = (id, tmp) => {
 export default function reducer(state, action) {
   
   const dict = {
-    SET_DAY: () => ({...state, day: action.day }),
+    // SET_DAY: () => ({...state, day: action.day }),
     SET_APPLICATION_DATA: () => ({
       ...state,
       days: action.days, 
