@@ -76,6 +76,7 @@ export default function useApplicationData () {
     }
 
     return () => {
+      console.log('SOCKET CLOSED')
       webSocket.close();
     }
 
