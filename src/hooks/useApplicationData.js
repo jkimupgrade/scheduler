@@ -50,22 +50,12 @@ export default function useApplicationData () {
 // },[])
 
   // initialize webSocket state
-  let [webSocket, setWebsocket] = useState(null);
+  // let [webSocket, setWebsocket] = useState(null);
   
   // instantiate webSocket class
   useEffect(() => {
     const webSocket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
-    setWebsocket(webSocket);
-    return () => {
-      webSocket.close();
-    }
-  }, []);
-
-  useEffect(() => {
-    // prevent app from crashing on mount (no webSocket object)
-    if (!webSocket) {
-      return;
-    }
+    // setWebsocket(webSocket);
 
     webSocket.onopen = function (event) {
       webSocket.send('ping');
@@ -85,7 +75,19 @@ export default function useApplicationData () {
       }
     }
 
-  }, [webSocket]);
+    return () => {
+      webSocket.close();
+    }
+
+  }, []);
+
+  // useEffect(() => {
+  //   // prevent app from crashing on mount (no webSocket object)
+  //   if (!webSocket) {
+  //     return;
+  //   }
+
+  // }, [webSocket]);
   
   // set day
   const setDay = (day) => dispatch({ type: SET_DAY, day });
